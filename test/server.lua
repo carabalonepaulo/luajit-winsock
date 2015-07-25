@@ -1,3 +1,5 @@
+require 'tcpserver'
+
 local server = TcpServer:new(5000)
 server:start(10)
 
