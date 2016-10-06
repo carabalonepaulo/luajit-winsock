@@ -16,7 +16,7 @@ ffi.cdef[[
     typedef unsigned char WORD;
     typedef unsigned char BYTE;
 
-    typedef struct WSAData {
+    typedef struct {
         WORD           wVersion;
         WORD           wHighVersion;
         char           szDescription[256];
@@ -26,14 +26,14 @@ ffi.cdef[[
         char           *lpVendorInfo;
     } WSADATA, *LPWSADATA;
 
-    typedef struct in_addr {
+    typedef struct {
         ulong s_addr;
-    };
+    } in_addr;
 
-    struct sockaddr {
+    struct {
         ushort sa_family;
         char sa_data[14];
-    };
+    } sockaddr;
 
     typedef struct {
         short sin_family;
@@ -42,12 +42,12 @@ ffi.cdef[[
         char sin_zero[8];
     } sockaddr_in;
 
-    typedef struct fd_set {
+    typedef struct {
         uint fd_count;
         SOCKET fd_array[64];
     } fd_set;
 
-    typedef struct timeval {
+    typedef struct {
         long tv_sec;
         long tv_usec;
     } timeval;
