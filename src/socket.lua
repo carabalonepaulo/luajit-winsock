@@ -84,9 +84,12 @@ function Socket:accept()
     end
 end
 
-function Socket:bind(host)
+function Socket:bind(host, port)
+    self.host = host
+    self.port = port
+    --------------
     local service = ffi.new('sockaddr_in')
-    service.sin_family = 2
+    service.sin_family = self.addressFamily
     service.sin_addr.s_addr = winsock.inet_addr(host)
     service.sin_port = winsock.htons(port)
     --------------
