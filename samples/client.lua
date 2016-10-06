@@ -1,5 +1,6 @@
-require 'tcpclient'
-
-local client = TcpClient:new('127.0.0.1', 5000)
-client:send('hello world')
-client:close()
+local Socket = require 'socket'
+--------------
+local socket = Socket:new(AF_INET, SOCK_STREAM, IPPROTO_TCP)
+socket:connect('127.0.0.1', 5000)
+socket:send('hello world')
+socket:close()

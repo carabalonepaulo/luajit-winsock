@@ -1,8 +1,9 @@
-require 'tcpserver'
-
-local server = TcpServer:new(5000)
-server:start(10)
-
-while true do
-	if avaliable(client) > 0 then print(recv(client, avaliable(client))) end
-end
+local Socket = require 'socket'
+--------------
+local socket = Socket:new(AF_INET, SOCK_STREAM, IPPROTO_TCP)
+socket:bind('127.0.0.1')
+socket:listen(32)
+--------------
+local client = socket:accept()
+client:send('hello world!')
+client:close()
