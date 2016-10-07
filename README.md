@@ -2,7 +2,7 @@ luajit-winsock
 =
 
 luajit-winsock is a pure lua **winsock implementation**, written using ffi binding.
-The code is under MIT license and must be updated.
+The code is under MIT license and will be updated.
 
 ---
 
