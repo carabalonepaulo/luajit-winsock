@@ -23,39 +23,6 @@ THE SOFTWARE.
 local winsock = require 'winsock'
 local ffi = require 'ffi'
 --------------
-AF_UNSPEC         = 0
-AF_INET           = 2
-AF_IPX            = 6
-AF_APPLETALK      = 16
-AF_NETBIOS        = 17
-AF_INET6          = 23
-AF_IRDA           = 26
-AF_BTH            = 32
---------------
-SOCK_STREAM       = 1
-SOCK_DGRAM        = 2
-SOCK_RAW          = 3
-SOCK_RDM          = 4
-SOCK_SEQPACKET    = 5
---------------
-IPPROTO_ICMP      = 1
-IPPROTO_IGMP      = 2
-BTHPROTO_RFCOMM   = 3
-IPPROTO_TCP       = 6
-IPPROTO_UDP       = 17
-IPPROTO_ICMPV6    = 58
-IPPROTO_RM        = 113
---------------
-SD_RECEIVE        = 0
-SD_SEND           = 1
-SD_BOTH           = 2
---------------
-IP                = 0
-IPv6              = 41
-Socket            = 65535
-TCP               = 6
-UDP               = 17
---------------
 local Socket = {}
 Socket.__index = Socket
 
@@ -94,7 +61,7 @@ function Socket:bind(host, port)
     service.sin_port = winsock.htons(port)
     --------------
     local sock_addr = ffi.cast('const struct sockaddr *', service)
-    if winsock.bind(socket, nil, 0) < 0 then error('Error bind: '..winsock.WSAGetLastError()) end
+    if winsock.bind(self.descriptor, sock_addr, ffi.sizeof(sock_addr)) < 0 then error('Error bind: '..winsock.WSAGetLastError()) end
 end
 
 function Socket:close()
@@ -135,6 +102,44 @@ end
 
 function Socket:shutdown(how)
     if winsock.shutdown(self.descriptor, how) < 0 then error('Error shutdown: '..winsock.WSAGetLastError()) end
+end
+
+function Socket:select(read, write, except, timeval)
+    local timeval = ffi.new('timeval')
+    timeval.tv_sec = 0
+    timeval.tv_usec = 0
+    --------------
+    local read_set = ffi.new('fd_set')
+    FD_ZERO(read_set)
+    if type(read) == 'table' then
+        for _, i in pairs(read) do
+            FD_SET(i, read_set)
+        end
+    else
+        FD_SET(read, read_set)
+    end
+    --------------
+    local write_set = ffi.new('fd_set')
+    FD_ZERO(write_set)
+    if type(write) == 'table' then
+        for _, i in pairs(write) do
+            FD_SET(i, write_set)
+        end
+    else
+        FD_SET(write, write_set)
+    end
+    --------------
+    local except_set = ffi.new('fd_set')
+    FD_ZERO(except_set)
+    if type(except) == 'table' then
+        for _, i in pairs(except) do
+            FD_SET(i, except_set)
+        end
+    else
+        FD_SET(except, except_set)
+    end
+    -------------
+    return winsock.select(read_set, write_set, except_set, timeval)
 end
 
 return Socket
